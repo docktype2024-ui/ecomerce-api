@@ -4,8 +4,11 @@ import bodyparser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 import 'dotenv/config'
+import cors from 'cors'
 const api = process.env.API_URL
 
+app.use(cors())
+app.options('*' , cors())
 
 //middleware
 app.use(bodyparser.json())
