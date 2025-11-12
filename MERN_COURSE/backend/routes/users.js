@@ -1,0 +1,15 @@
+import User from '../models/user.js'
+import express from 'express'
+import mongoose from 'mongoose'
+const router = express.Router()
+
+router.get('/' , async (req , res) => {
+    const userList = await User.find()
+
+    if (!userList){
+        res.status(500).json({success:false})
+    }
+    res.send(userList)
+})
+
+export default router

@@ -3,56 +3,28 @@ const app = express()
 import bodyparser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
+import 'dotenv/config'
+const api = process.env.API_URL
+
 
 //middleware
 app.use(bodyparser.json())
 app.use(morgan('tiny'))
 
 
-const productSchema = mongoose.Schema({
-    name: String,
-    image: String,
-    countInStock: {
-        type: Number,
-        required: true,
-    },
-})
-
-const Product = mongoose.model('Product' , productSchema)
+//routers
+import categoriesRouter from './routes/categories.js'
+import ordersRouter from './routes/orders.js'
+import productsRouter from './routes/products.js'
+import usersRouter from './routes/users.js'
 
 
-import 'dotenv/config'
+app.use(`${api}/categories` , categoriesRouter)
+app.use(`${api}/orders` , ordersRouter)
+app.use(`${api}/products` , productsRouter)
+app.use(`${api}/users` , usersRouter)
 
-const api = process.env.API_URL
 
-app.get(`${api}/products`, async (req, res) => {
-    const productList = await Product.find()
-
-    if (!productList){
-        res.status(500).json({success:false})
-    }
-
-    res.send(productList)
-})
-
-app.post(`${api}/products`, (req, res) => {
-    const product = new Product({
-        name: req.body.name,
-        image: req.body.image,
-        countInStock: req.body.countInStock,
-    })
-
-    product.save()
-    .then((createdProduct=> {
-        res.status(201).json(createdProduct)
-    }))
-    .catch((err) => {
-        res.status(500).json({
-            error: err,
-            success: false
-        })
-    })
-})
 
 mongoose.connect(process.env.CONECTION_STRING , {
     dbName:'eshop-database'
