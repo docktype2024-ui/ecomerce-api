@@ -14,23 +14,29 @@ router.get(`/`, async (req, res) => {
     res.send(productList)
 })
 
-router.post(`/`, (req, res) => {
+router.post(`/`, async (req, res) => {
     const product = new Product({
         name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
         image: req.body.image,
+        images: req.body.images,
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
         countInStock: req.body.countInStock,
+        rating: req.body.rating,
+        numReviews: req.body.numReviews,
+        isFeature: isFeature,
+        dateCreated: dateCreated
     })
 
-    product.save()
-    .then((createdProduct=> {
-        res.status(201).json(createdProduct)
-    }))
-    .catch((err) => {
-        res.status(500).json({
-            error: err,
-            success: false
-        })
-    })
+    product = await product.save()
+    if (!product){
+        return res.status(500).send('O produto nao pode ser criado')
+    }
+
+    return res.send(product)
 })
 
 export default router
